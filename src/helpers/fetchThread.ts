@@ -6,7 +6,10 @@ export default async function (merkleRoot: string) {
   const {
     data: { result },
   } = await axios<{
-    result: { merkleRoot: string; body?: { data?: { text?: string } } }[]
+    result: {
+      merkleRoot: string
+      body?: { username?: string; data?: { text?: string } }
+    }[]
   }>(url)
   let foundMention = false
   return result
@@ -14,7 +17,9 @@ export default async function (merkleRoot: string) {
       if (r.merkleRoot === merkleRoot) {
         foundMention = true
       }
-      return foundMention ? '' : r?.body?.data?.text
+      return foundMention
+        ? { text: '', author: '' }
+        : { text: r?.body?.data?.text, author: r.body?.username }
     })
-    .filter((v) => !!v)
+    .filter((v) => !!v.text && !!v.author)
 }

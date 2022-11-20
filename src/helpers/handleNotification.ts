@@ -28,10 +28,14 @@ export default async function (notification: Notification) {
       merkleRoot: notification.cast.merkleRoot,
     })
     const thread = await fetchThread(notification.cast?.merkleRoot)
-    if (!thread.length) {
+    if (!thread.length || !thread[0].author) {
       return
     }
-    const imageBuffer = textToImage(thread.join('\n\n'), title)
+    const imageBuffer = textToImage(
+      thread.map((t) => t.text).join('\n\n'),
+      thread[0].author,
+      title
+    )
     const link = await uploadImage(imageBuffer)
     const text = `screenshotessay\n${link}`
     await publishCast(text, notification.cast.merkleRoot)
