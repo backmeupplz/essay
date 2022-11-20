@@ -33,12 +33,9 @@ export default async function (notification: Notification) {
     }
     const imageBuffer = textToImage(thread.join('\n\n'), title)
     const link = await uploadImage(imageBuffer)
-    await publishCast(link, notification.cast.merkleRoot)
-    console.log(
-      'Published',
-      `screenshotessay\n${link}`,
-      notification.cast.merkleRoot
-    )
+    const text = `screenshotessay\n${link}`
+    await publishCast(text, notification.cast.merkleRoot)
+    console.log('Published', text, notification.cast.merkleRoot)
   } catch (error) {
     console.log(error instanceof Error ? error.message : error)
     if (notification.cast?.merkleRoot) {
