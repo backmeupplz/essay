@@ -15,10 +15,13 @@ export default async function (
   const url = `https://api.farcaster.xyz/v2/all-casts-in-thread?threadHash=${threadHash}`
   console.log('Fetching thread', url)
   const {
-    data: { result },
+    data: { result, next },
   } = await axios<{
     result: {
       casts: Cast[]
+    }
+    next?: {
+      cursor?: string
     }
   }>(url, {
     headers: {
@@ -27,10 +30,32 @@ export default async function (
       'Accept-Encoding': 'gzip,deflate,compress',
     },
   })
+  const fetchedCasts = result.casts
+  let cursor = next?.cursor
+  while (cursor) {
+    const {
+      data: { result, next },
+    } = await axios<{
+      result: {
+        casts: Cast[]
+      }
+      next?: {
+        cursor?: string
+      }
+    }>(`${url}&cursor=${cursor}`, {
+      headers: {
+        accept: 'application/json',
+        authorization: `Bearer ${bearerToken}`,
+        'Accept-Encoding': 'gzip,deflate,compress',
+      },
+    })
+    fetchedCasts.push(...result.casts)
+    cursor = next?.cursor
+  }
 
   let originalCast: Cast | undefined
   const hashToCast = {} as { [hash: string]: Cast }
-  for (const cast of result.casts) {
+  for (const cast of fetchedCasts) {
     if (cast.hash === endHash) {
       originalCast = cast
     }
