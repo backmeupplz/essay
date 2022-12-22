@@ -1,25 +1,40 @@
 import axios from 'axios'
-import env from '@/helpers/env'
 
-export default async function (merkleRoot: string) {
-  const url = `https://api.farcaster.xyz/indexer/threads/${merkleRoot}?viewer_address=${env.FARCASTER_ADDRESS}&version=2&ia=software`
+export default async function (
+  threadHash: string,
+  endHash: string,
+  bearerToken: string
+) {
+  const url = `https://api.farcaster.xyz/v2/all-casts-in-thread?threadHash=${threadHash}`
+  console.log('Fetching thread', url)
   const {
     data: { result },
   } = await axios<{
     result: {
-      merkleRoot: string
-      body?: { username?: string; data?: { text?: string } }
-    }[]
-  }>(url)
+      casts: {
+        hash: string
+        author: { username?: string }
+        text?: string
+      }[]
+    }
+  }>(url, {
+    headers: {
+      accept: 'application/json',
+      authorization: `Bearer ${bearerToken}`,
+      'Accept-Encoding': 'gzip,deflate,compress',
+    },
+  })
   let foundMention = false
-  return result
+  return result.casts
     .map((r) => {
-      if (r.merkleRoot === merkleRoot) {
+      if (r.hash === endHash) {
         foundMention = true
       }
-      return foundMention
-        ? { text: '', author: '' }
-        : { text: r?.body?.data?.text, author: r.body?.username }
+      return foundMention ||
+        !r.text ||
+        /recast:farcaster:\/\/casts\/.+/.test(r.text)
+        ? { text: '', author: '', hash: r.hash }
+        : { text: r?.text, author: r?.author.username }
     })
     .filter((v) => !!v.text && !!v.author)
 }

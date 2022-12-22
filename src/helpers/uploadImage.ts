@@ -1,7 +1,7 @@
-import ImgurClient from 'imgur'
-import env from '@/helpers/env'
+import env from './env'
+import imgur from 'imgur'
 
-const client = new ImgurClient({
+const client = new (imgur as any).ImgurClient({
   clientId: env.IMGUR_CLIENT_ID,
   clientSecret: env.IMGUR_CLIENT_SECRET,
   refreshToken: env.IMGUR_REFRESH_TOKEN,
