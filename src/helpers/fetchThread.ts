@@ -1,5 +1,12 @@
 import axios from 'axios'
 
+interface Cast {
+  hash: string
+  parentHash?: string
+  author: { username?: string }
+  text?: string
+}
+
 export default async function (
   threadHash: string,
   endHash: string,
@@ -11,11 +18,7 @@ export default async function (
     data: { result },
   } = await axios<{
     result: {
-      casts: {
-        hash: string
-        author: { username?: string }
-        text?: string
-      }[]
+      casts: Cast[]
     }
   }>(url, {
     headers: {
@@ -24,17 +27,30 @@ export default async function (
       'Accept-Encoding': 'gzip,deflate,compress',
     },
   })
-  let foundMention = false
-  return result.casts
-    .map((r) => {
-      if (r.hash === endHash) {
-        foundMention = true
-      }
-      return foundMention ||
-        !r.text ||
-        /recast:farcaster:\/\/casts\/.+/.test(r.text)
-        ? { text: '', author: '', hash: r.hash }
-        : { text: r?.text, author: r?.author.username }
-    })
-    .filter((v) => !!v.text && !!v.author)
+
+  let originalCast: Cast | undefined
+  const hashToCast = {} as { [hash: string]: Cast }
+  for (const cast of result.casts) {
+    if (cast.hash === endHash) {
+      originalCast = cast
+    }
+    hashToCast[cast.hash] = cast
+  }
+  if (!originalCast || !originalCast.parentHash) {
+    return []
+  }
+  let currentParentHash: string | undefined = originalCast.parentHash
+  const resultingCasts = [originalCast] as Cast[]
+  do {
+    const currentCast: Cast = hashToCast[currentParentHash]
+    if (!currentCast) {
+      return []
+    }
+    resultingCasts.unshift(currentCast)
+    currentParentHash = currentCast.parentHash
+  } while (currentParentHash)
+  return resultingCasts.map((c) => ({
+    text: c.text,
+    author: c.author.username,
+  }))
 }
