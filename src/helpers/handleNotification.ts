@@ -27,9 +27,9 @@ export default async function (
     if (dbThread) {
       return
     }
-    // await ThreadModel.create({
-    //   merkleRoot: notification.content.cast.hash,
-    // })
+    await ThreadModel.create({
+      merkleRoot: notification.content.cast.hash,
+    })
     if (!notification.content.cast?.threadHash) {
       return
     }
