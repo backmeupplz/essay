@@ -40,7 +40,7 @@ export default async function (
     return []
   }
   let currentParentHash: string | undefined = originalCast.parentHash
-  const resultingCasts = [originalCast] as Cast[]
+  const resultingCasts = [] as Cast[]
   do {
     const currentCast: Cast = hashToCast[currentParentHash]
     if (!currentCast) {
