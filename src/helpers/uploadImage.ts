@@ -8,11 +8,10 @@ const client = new (imgur as any).ImgurClient({
 })
 
 export default async function (image: Buffer) {
-  const {
-    data: { link },
-  } = await client.upload({
+  const { data } = await client.upload({
     image,
     type: 'stream',
   })
-  return link
+  console.log(data)
+  return data.link
 }

@@ -27,9 +27,9 @@ export default async function (
     if (dbThread) {
       return
     }
-    await ThreadModel.create({
-      merkleRoot: notification.content.cast.hash,
-    })
+    // await ThreadModel.create({
+    //   merkleRoot: notification.content.cast.hash,
+    // })
     if (!notification.content.cast?.threadHash) {
       return
     }
@@ -48,15 +48,15 @@ export default async function (
     )
     const link = await uploadImage(imageBuffer)
     const text = `screenshotessay\n${link}`
-    await publishCast(text, notification.content.cast.hash)
+    // await publishCast(text, notification.content.cast.hash)
     console.log('Published', text, notification.content.cast.hash)
   } catch (error) {
     console.log(error instanceof Error ? error.message : error)
     if (notification.content.cast?.hash) {
-      await publishCast(
-        "@borodutch something went wrong here, I'm so sorry",
-        notification.content.cast.hash
-      )
+      // await publishCast(
+      //   "@borodutch something went wrong here, I'm so sorry",
+      //   notification.content.cast.hash
+      // )
     }
   }
 }

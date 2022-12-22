@@ -2544,7 +2544,7 @@ __metadata:
     eslint-plugin-prettier: ^4.2.1
     eslint-plugin-sort-imports-es6-autofix: ^0.6.0
     ethers: ^5.7.2
-    imgur: ^2.2.0
+    imgur: 2.2.0
     mongoose: ^6.8.1
     prettier: ^2.8.1
     tsc-watch: ^6.0.0
@@ -3077,7 +3077,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"imgur@npm:^2.2.0":
+"imgur@npm:2.2.0":
   version: 2.2.0
   resolution: "imgur@npm:2.2.0"
   dependencies:
