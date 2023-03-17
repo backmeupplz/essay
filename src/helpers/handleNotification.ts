@@ -27,6 +27,12 @@ export default async function (
     if (dbThread) {
       return
     }
+    if (
+      notification.content.cast.timestamp <
+      Date.now() - 1000 * 60 * 60 * 24
+    ) {
+      return
+    }
     await ThreadModel.create({
       merkleRoot: notification.content.cast.hash,
     })
