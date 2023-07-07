@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@big-whale-labs/botcaster": "^0.0.17",
-    "@standard-crypto/farcaster-js": "^5.5.2",
+    "@standard-crypto/farcaster-js": "^5.6.0",
     "@typegoose/typegoose": "^10.0.0",
     "axios": "^1.2.1",
     "dotenv": "^16.0.3",

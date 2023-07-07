@@ -27,6 +27,9 @@ export default async function (
     if (dbThread) {
       return
     }
+    if (notification?.actor?.username === 'essay') {
+      return
+    }
     if (
       notification.content.cast.timestamp <
       Date.now() - 1000 * 60 * 60 * 24
@@ -45,7 +48,10 @@ export default async function (
       bearerToken
     )
     if (!thread.length || !thread[0].author) {
-      return
+      return publishCast(
+        "Hi there 🙏 this doesn't look like a thread so I can't quite turn it into a screenshot essay. Try replying with @essay to a thread!",
+        notification.content.cast.hash
+      )
     }
     const imageBuffer = textToImage(
       thread.map((t) => t.text).join('\n\n'),

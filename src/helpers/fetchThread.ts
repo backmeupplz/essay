@@ -12,7 +12,7 @@ export default async function (
   endHash: string,
   bearerToken: string
 ) {
-  const url = `https://api.farcaster.xyz/v2/all-casts-in-thread?threadHash=${threadHash}`
+  const url = `https://api.warpcast.com/v2/all-casts-in-thread?threadHash=${threadHash}`
   console.log('Fetching thread', url)
   const {
     data: { result, next },
