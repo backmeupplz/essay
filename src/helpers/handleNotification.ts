@@ -5,6 +5,10 @@ import publishCast from './publishCast'
 import textToImage from './textToImage'
 import uploadImage from './uploadImage'
 
+function delay(s: number) {
+  return new Promise((resolve) => setTimeout(resolve, s * 1000))
+}
+
 export default async function (
   notification: Notification,
   bearerToken: string
@@ -58,8 +62,20 @@ export default async function (
       thread[0].author,
       title
     )
-    const link = await uploadImage(imageBuffer)
-    const text = `screenshotessay\n${link}`
+    let text = `screenshotessay\n${await uploadImage(imageBuffer)}`
+    let tries = 0
+    while (text.includes('function')) {
+      if (tries > 4) {
+        return publishCast(
+          "@borodutch I'm so sorry, tried to upload essay 5 times and failed, please try again later",
+          notification.content.cast.hash
+        )
+      }
+      await delay(1)
+      console.log(`Retrying #${tries}...`)
+      text = `screenshotessay\n${await uploadImage(imageBuffer)}`
+      tries++
+    }
     await publishCast(text, notification.content.cast.hash)
     console.log('Published', text, notification.content.cast.hash)
   } catch (error) {
